@@ -3,10 +3,11 @@ import streamlit as st
 import pandas as pd
 from pathlib import Path
 
-st.set_page_config(page_title="Mini Internship Dashboard", layout="centered")
-st.title("Mini Internship Dashboard (test)")
+st.set_page_config(page_title="Internship Dashboard", layout="wide")
+st.title("Internship Dashboard")
+st.markdown("A compact, demo-friendly app to browse internship listings.")
 
-DATA_PATH = Path("data/sample_internships.csv")
+DATA_PATH = Path("data/internships.csv")  # put your CSV here
 
 @st.cache_data
 def load_data(path=DATA_PATH):
