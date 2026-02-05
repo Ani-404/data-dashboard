@@ -1,4 +1,4 @@
-# Minimal Streamlit ] dashboard for quick testing
+# app.py — nicer-looking but simple Streamlit internship dashboard
 import streamlit as st
 import pandas as pd
 from pathlib import Path
@@ -84,6 +84,38 @@ c1.metric("Total listings", len(filtered))
 c2.metric("Unique companies", int(filtered["company"].nunique()) if "company" in filtered.columns else "n/a")
 c3.metric("Unique locations", int(filtered["location"].nunique()) if "location" in filtered.columns else "n/a")
 
-st.markdown("")
+st.markdown("") 
 
+# two-column layout: charts + table
+left, right = st.columns([2, 3])
 
+with left:
+    st.subheader("Top companies")
+    if "company" in filtered.columns:
+        top_companies = filtered["company"].value_counts().head(10)
+        st.bar_chart(top_companies)
+    else:
+        st.write("No company column found.")
+
+    if "date_posted" in filtered.columns:
+        try:
+            st.subheader("Listings over time")
+            tmp = filtered.copy()
+            tmp["date_posted"] = pd.to_datetime(tmp["date_posted"], errors="coerce")
+            counts = tmp.set_index("date_posted").resample("W").size()
+            st.line_chart(counts)
+        except Exception:
+            pass
+
+with right:
+    st.subheader("Listings")
+    show_cols = [c for c in ["title", "company", "location", "stipend", "date_posted", "url"] if c in filtered.columns]
+    st.dataframe(filtered[show_cols].reset_index(drop=True), height=520)
+
+# download filtered CSV
+csv_bytes = filtered.to_csv(index=False).encode("utf-8")
+st.download_button("Download filtered CSV", data=csv_bytes, file_name="internships_filtered.csv", mime="text/csv")
+
+# small "about" footer
+st.markdown("---")
+st.caption("Simple demo: keep CSV at `data/internships.csv`. Replace sample data with your own for real demonstrations.")
