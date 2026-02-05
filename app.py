@@ -17,20 +17,10 @@ def load_data(path=DATA_PATH):
     df.columns = [c.strip().lower().replace(" ", "_") for c in df.columns]
     return df
 
+def to_numeric_series(s):
+    # keep digits and dots, then coerce
+    tmp = s.astype(str).str.replace(r"[^\d\.]", "", regex=True)
+    return pd.to_numeric(tmp, errors="coerce")
+
 df = load_data()
 
-if df.empty:
-    st.warning("No data found at data/sample_internships.csv. Add a CSV and refresh.")
-    st.stop()
-
-company_filter = st.text_input("Filter by company (contains):")
-if company_filter:
-    filtered = df[df["company"].str.contains(company_filter, case=False, na=False)]
-else:
-    filtered = df
-
-st.markdown(f"**Showing {len(filtered)} listings**")
-
-# Show only core columns to keep it compact
-show_cols = [c for c in ["title", "company", "location", "stipend", "date_posted", "url"] if c in filtered.columns]
-st.dataframe(filtered[show_cols].reset_index(drop=True), height=400)
