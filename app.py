@@ -1,4 +1,4 @@
-# app.py — nicer-looking but simple Streamlit internship dashboard
+# app.py
 import streamlit as st
 import pandas as pd
 from pathlib import Path
@@ -7,7 +7,7 @@ st.set_page_config(page_title="Internship Dashboard", layout="wide")
 st.title("Internship Dashboard")
 st.markdown("A compact, demo-friendly app to browse internship listings.")
 
-DATA_PATH = Path("data/internships.csv")  # put your CSV here
+DATA_PATH = Path("data/sample.csv") 
 
 @st.cache_data
 def load_data(path=DATA_PATH):
@@ -75,7 +75,6 @@ if min_stipend.strip():
             s_num = to_numeric_series(filtered["stipend"])
             filtered = filtered[s_num >= min_val]
     except Exception:
-        # keep simple: ignore parsing errors
         pass
 
 # top row of metrics
@@ -116,6 +115,5 @@ with right:
 csv_bytes = filtered.to_csv(index=False).encode("utf-8")
 st.download_button("Download filtered CSV", data=csv_bytes, file_name="internships_filtered.csv", mime="text/csv")
 
-# small "about" footer
 st.markdown("---")
 st.caption("Simple demo: keep CSV at `data/internships.csv`. Replace sample data with your own for real demonstrations.")
