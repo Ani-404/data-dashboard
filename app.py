@@ -27,13 +27,15 @@ df = load_data()
 # sidebar: upload + filters
 with st.sidebar:
     st.header("Controls")
-    st.write("Upload a CSV or use the sample file at `data/internships.csv`.")
+    st.write(f"Upload a CSV or use the sample file at `{DATA_PATH}`.")
     uploaded = st.file_uploader("Upload CSV", type=["csv"])
     if uploaded:
         uploaded_df = pd.read_csv(uploaded)
         uploaded_df.columns = [c.strip().lower().replace(" ", "_") for c in uploaded_df.columns]
         uploaded_df.to_csv(DATA_PATH, index=False)
-        st.success("Saved to data/internships.csv. Refresh the page to load it.")
+        load_data.clear()
+        st.success(f"Saved to {DATA_PATH}. Reloading...")
+        st.rerun()
     st.markdown("---")
     st.subheader("Filters (optional)")
     company_q = st.text_input("Company contains")
@@ -45,7 +47,7 @@ with st.sidebar:
     min_stipend = st.text_input("Min stipend (digits only)", value="")
 
 if df.empty:
-    st.warning("No data found at data/internships.csv. Upload a CSV in the sidebar or add a file and refresh.")
+    st.warning(f"No data found at {DATA_PATH}. Upload a CSV in the sidebar or add a file and refresh.")
     st.stop()
 
 # apply filters
@@ -116,4 +118,4 @@ csv_bytes = filtered.to_csv(index=False).encode("utf-8")
 st.download_button("Download filtered CSV", data=csv_bytes, file_name="internships_filtered.csv", mime="text/csv")
 
 st.markdown("---")
-st.caption("Simple demo: keep CSV at `data/internships.csv`. Replace sample data with your own for real demonstrations.")
+st.caption(f"Simple demo: keep CSV at `{DATA_PATH}`. Replace sample data with your own for real demonstrations.")
